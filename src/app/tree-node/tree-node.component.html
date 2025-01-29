@@ -1,0 +1,13 @@
+<li>
+    <div class="node" (click)="toggleNode()">
+      <span>{{ node.key }}</span>: 
+      <span class="value">{{ node.value || (node.children?.length ? '[...]' : '') }}</span>
+      <span *ngIf="node.children?.length" class="toggle-icon">
+        [{{ node.collapsed ? '+' : '-' }}]
+      </span>
+    </div>
+
+    <ul *ngIf="node.children?.length && !node.collapsed">
+      <app-tree-node *ngFor="let child of node.children" [node]="child"></app-tree-node>
+    </ul>
+  </li>

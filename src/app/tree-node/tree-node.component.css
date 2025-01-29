@@ -1,0 +1,42 @@
+:host {
+    display: block;
+    font-family: 'Arial', sans-serif;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+
+  li {
+    margin: 4px 0;
+  }
+
+  .node {
+    padding: 8px 12px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    display: inline-block;
+    transition: background 0.3s ease;
+  }
+
+  .value {
+    font-weight: bold;
+    color: #00796b;
+  }
+
+  .toggle-icon {
+    font-weight: bold;
+    color: #00796b;
+    cursor: pointer;
+  }
+
+  ul li::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #00796b;
+    margin-right: 8px;
+    border-radius: 50%;
+  }
