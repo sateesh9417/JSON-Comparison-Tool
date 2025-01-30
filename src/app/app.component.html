@@ -6,8 +6,10 @@
     <button (click)="minifyJsons()">Minify</button>
     <button (click)="swapJsons()">Swap</button>
     <button (click)="toggleFontSize()">Toggle Font Size</button>
-    <button (click)="resetFields()">Reset Fields</button>
     <button (click)="toggleTreeView()">Tree View</button>
+    <button (click)="resetFields()">Reset Fields</button>
+    <button (click)="downloadJson(json1, 'json1.json')">Download JSON 1</button>
+    <button (click)="downloadJson(json2, 'json2.json')">Download JSON 2</button>
   </div>
 
   <div class="json-inputs">
@@ -44,7 +46,7 @@
 
   <h3 *ngIf="differences.length" class="differences-title">Differences:</h3>
 
-  <ul class="differences-list">
+  <ul #target class="differences-list">
     <li *ngFor="let diff of differences">{{ diff }}</li>
   </ul>
 

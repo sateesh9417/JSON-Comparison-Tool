@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { JsonComparisonService } from './service/json-comparison.service';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { TreeNodeComponent } from './tree-node/tree-node.component';
   imports: [RouterOutlet, CommonModule, FormsModule, TreeNodeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  standalone: true
+  standalone: true,
 })
 export class AppComponent {
   title = 'JsonComparisonApp';
@@ -22,31 +22,49 @@ export class AppComponent {
   jsonTree1: any[] = [];
   jsonTree2: any[] = [];
   showTreeView = false;
+  @ViewChild('target') targetElement!: ElementRef;
 
-  constructor(
-    private jsonComparisonService: JsonComparisonService
-  ) {}
+  constructor(private jsonComparisonService: JsonComparisonService) {}
 
   formatJsons(): void {
-    try {
+    const isValidJson = (json:any) => {
+      try {
+        const parsed = JSON.parse(json);
+        return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed);
+      } catch {
+        return false;
+      }
+    };
+  
+    if ((this.differences.length !== 0 || this.json1 || this.json2) && (isValidJson(this.json1) && isValidJson(this.json2))) {
       this.json1 = JSON.stringify(JSON.parse(this.json1), null, 2);
       this.json2 = JSON.stringify(JSON.parse(this.json2), null, 2);
-    } catch {
-      alert('Invalid JSON. Please correct your input.');
+    } else {
+      alert(this.json1 && this.json2 ? 'Invalid JSON. Please correct your input.' : 'Invalid JSON 1 or 2. Please correct your input.');
     }
   }
+  
 
   minifyJsons(): void {
-    try {
+    const isValidJson = (json:any) => {
+      try {
+        const parsed = JSON.parse(json);
+        return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed);
+      } catch {
+        return false;
+      }
+    };
+  
+    if ((this.differences.length !== 0 || this.json1 || this.json2) && (isValidJson(this.json1) && isValidJson(this.json2))) {
       this.json1 = JSON.stringify(JSON.parse(this.json1));
       this.json2 = JSON.stringify(JSON.parse(this.json2));
-    } catch {
-      alert('Invalid JSON. Please correct your input.');
+    } else {
+      alert(this.json1 && this.json2 ? 'Invalid JSON. Please correct your input.' : 'Invalid JSON 1 or 2. Please correct your input.');
     }
   }
 
-  swapJsons(){
-    [this.json1,this.json2] = [this.json2,this.json1]
+  swapJsons() {
+    [this.json1, this.json2] = [this.json2, this.json1];
   }
 
   toggleFontSize(): void {
@@ -54,15 +72,15 @@ export class AppComponent {
   }
 
   resetFields(): void {
-    if(this.json1 !== '' || this.json2 !== ''){
-      if(confirm('Are you sure want to reset?')){
+    if (this.json1 !== '' || this.json2 !== '') {
+      if (confirm('Are you sure want to reset?')) {
         this.json1 = '';
         this.json2 = '';
         this.differences = [];
         this.errorMessage = '';
         this.showTreeView = false;
       }
-    }else{
+    } else {
       alert('The JSON field is empty. Please input data before resetting.');
     }
   }
@@ -76,24 +94,40 @@ export class AppComponent {
       const parsedJson2 = JSON.parse(this.json2);
       this.jsonTree1 = this.parseJsonToTree(JSON.parse(this.json1));
       this.jsonTree2 = this.parseJsonToTree(JSON.parse(this.json2));
-      this.differences = this.jsonComparisonService.compareJsonObjects(parsedJson1, parsedJson2);
+      this.differences = this.jsonComparisonService.compareJsonObjects(
+        parsedJson1,
+        parsedJson2
+      );
+      setTimeout(()=>{
+        if (this.targetElement) {
+          this.targetElement.nativeElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      })
       if (this.differences.length === 0) {
         this.differences.push('The JSON objects are identical.');
       }
     } catch (error) {
-      this.errorMessage = 'Invalid JSON input. Please enter valid JSON objects.';
+      this.errorMessage =
+        'Invalid JSON input. Please enter valid JSON objects.';
     }
   }
 
   toggleTreeView(): void {
-    if(this.differences.length !== 0 || (this.json1 !== '' && this.json2 !== '')){
+    if (
+      this.differences.length !== 0 ||
+      (this.json1 !== '' && this.json2 !== '')
+    ) {
       this.showTreeView = !this.showTreeView;
-      if(this.showTreeView){
+      if (this.showTreeView) {
         this.jsonTree1 = this.parseJsonToTree(JSON.parse(this.json1));
         this.jsonTree2 = this.parseJsonToTree(JSON.parse(this.json2));
       }
     } else {
-      this.errorMessage = 'Invalid JSON input. Please enter valid JSON objects.';
+      this.errorMessage =
+        'Invalid JSON input. Please enter valid JSON objects.';
     }
   }
 
@@ -109,4 +143,18 @@ export class AppComponent {
       collapsed: true,
     }));
   }
+
+  downloadJson(jsonContent: string, fileName: string): void {
+    if ((this.json1 || this.json2) && confirm('Are you sure you want to download?')) {
+      const blob = new Blob([jsonContent], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${fileName}.txt`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } else if (!(this.json1 || this.json2)) {
+      alert('Please fill the JSON field before downloading.');
+    }
+  }  
+  
 }

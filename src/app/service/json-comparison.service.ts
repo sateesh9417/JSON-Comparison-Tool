@@ -8,7 +8,6 @@ export class JsonComparisonService {
   compareJsonObjects(obj1: any, obj2: any, path: string = ''): string[] {
     const differences: string[] = [];
   
-    // Handle type mismatch with a detailed message
     if (this.isDifferentType(obj1, obj2)) {
       const type1 = Array.isArray(obj1) ? 'array' : typeof obj1;
       const type2 = Array.isArray(obj2) ? 'array' : typeof obj2;
@@ -18,7 +17,6 @@ export class JsonComparisonService {
       return differences;
     }
   
-    // Handle primitive or null values
     if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
       if (obj1 !== obj2) {
         differences.push(
@@ -28,7 +26,6 @@ export class JsonComparisonService {
       return differences;
     }
   
-    // Handle nested structures by iterating over keys
     const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
     for (const key of keys) {
       const newPath = path ? `${path}.${key}` : key;
