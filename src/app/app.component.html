@@ -1,5 +1,5 @@
 <div class="container">
-  <h2 class="title">Dynamic JSON Comparison Tool</h2>
+  <h2 class="title">JSON Comparison Tool</h2>
 
   <div class="controls">
     <button (click)="formatJsons()">Format</button>
@@ -8,15 +8,13 @@
     <button (click)="toggleFontSize()">Toggle Font Size</button>
     <button (click)="toggleTreeView()">Tree View</button>
     <button (click)="resetFields()">Reset Fields</button>
-    <button (click)="downloadJson(json1, 'json1.json')">Download JSON 1</button>
-    <button (click)="downloadJson(json2, 'json2.json')">Download JSON 2</button>
   </div>
 
   <div class="json-inputs">
     <div class="json-block">
       <label for="json1">JSON 1:</label>
       <textarea [style.fontSize]="fontSize" rows="15" id="json1" [(ngModel)]="json1" placeholder="Enter JSON 1 here..."></textarea>
-      <div *ngIf="showTreeView" class="tree-view">
+      <div #targetTreeView *ngIf="showTreeView" class="tree-view">
         <h4>Tree View for JSON 1:</h4>
         <ul>
           <ng-container *ngFor="let node of jsonTree1">
@@ -24,6 +22,12 @@
           </ng-container>
         </ul>
       </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="compare-btn" (click)="compareJsons()">Compare JSONs</button>
+      <button (click)="downloadJson(json1, 'json1.json')">Download JSON 1</button>
+      <button (click)="downloadJson(json2, 'json2.json')">Download JSON 2</button>
     </div>
 
     <div class="json-block">
@@ -40,8 +44,6 @@
     </div>
   </div>
 
-  <button class="compare-btn" (click)="compareJsons()">Compare JSONs</button>
-
   <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 
   <h3 *ngIf="differences.length" class="differences-title">Differences:</h3>
@@ -49,5 +51,4 @@
   <ul #target class="differences-list">
     <li *ngFor="let diff of differences">{{ diff }}</li>
   </ul>
-
 </div>
