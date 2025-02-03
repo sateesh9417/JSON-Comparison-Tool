@@ -74,7 +74,7 @@ export class AppComponent {
     this.fontSize = this.fontSize === '14px' ? '18px' : '14px';
   }
 
-  compareJsons(): void {
+  async compareJsons() {
     this.errorMessage = '';
     this.differences = [];
   
@@ -97,7 +97,7 @@ export class AppComponent {
       const parsedJson1 = JSON.parse(this.json1);
       const parsedJson2 = JSON.parse(this.json2);
   
-      this.differences = this.jsonComparisonService.compareJsonObjects(parsedJson1, parsedJson2);
+      this.differences = await this.jsonComparisonService.compareJsonObjects(parsedJson1, parsedJson2);
       
       if (this.differences.length === 0) {
         this.differences.push('The JSON objects are identical.');
